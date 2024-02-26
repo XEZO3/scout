@@ -19,10 +19,11 @@ class admins extends Authenticatable
         'username',
         'name',
         'password',
+        'level'
     ];
 
 
     protected $casts = [
-        'password' => 'hashed',
+        // 'password' => 'hashed',
     ];
 }

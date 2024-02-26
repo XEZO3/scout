@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('medical')->nullable();
             $table->float('points')->nullable();
             $table->integer('absens')->nullable();
+            $table->enum("level",['sprouts','cubs','scount','advscout']);
             $table->rememberToken();
             $table->timestamps();
         });

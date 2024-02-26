@@ -10,9 +10,20 @@ use Illuminate\Support\Facades\DB;
 
 class ActivitiesController extends Controller
 {
+    private static $user;
+    public function __construct()
+    {
+        self::$user = auth()->guard('admin')->user();
+    }
 
     public function index(){
-        $activities['activity'] = activities::with("students")->orderBy('created_at')->get();
+       
+        
+        if(self::$user->level ==null ||empty(self::$user->level)){
+            $activities['activity'] = activities::with("students")->orderBy('created_at')->get();
+        }else{
+            $activities['activity'] = activities::with("students")->where("level",self::$user->level)->orderBy('created_at')->get();
+        }
         $activities['total_user'] = Students::count();
         return response()->json([
             'message' => "",

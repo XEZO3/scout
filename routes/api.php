@@ -30,9 +30,9 @@ Route::post('/admin/login',[AdminController::class,"login"]);
 
 
 
-Route::resource('activities', ActivitiesController::class);
-Route::resource('groups', GroupController::class);
-Route::resource('students', AdminUserController::class);
+Route::resource('activities', ActivitiesController::class)->middleware('auth:admin');
+Route::resource('groups', GroupController::class)->middleware('auth:sanctum');
+Route::resource('students', AdminUserController::class)->middleware('auth:sanctum');
 Route::put('/students/changeGroup/{student}',[AdminUserController::class,"changeUserGroup"]);
 
 // Route::post("/activity/save/{activity_id}",[UserActivitiesController::class,"store"]);
