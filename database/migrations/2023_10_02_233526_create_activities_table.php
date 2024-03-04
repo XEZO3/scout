@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
             $table->string("title");
-            $table->enum("level",['sprouts','cubs','scount','advscout']);
+            $table->enum("level",['sprouts','cubs','scount','advscout'])->default("sprouts");
             $table->timestamps();
         });
     }

@@ -11,6 +11,7 @@ class activities extends Model
     protected $table="activities";
     protected $fillable = [
         'title',
+        'level'
     ];
 
     public function Students()

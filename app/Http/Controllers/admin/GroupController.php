@@ -10,8 +10,17 @@ use Illuminate\Support\Facades\DB;
 
 class GroupController extends Controller
 {
+    private static $user;
+    public function __construct()
+    {
+        self::$user = auth()->guard('admin')->user();
+    }
     public function index(){
-        $groups = groups::with("students")->orderBy('created_at')->get();
+        if(self::$user->level!="admin"){
+            $groups = groups::with("students")->where("level",self::$user->level)->orderBy('created_at')->get();
+        }else{
+            $groups = groups::with("students")->orderBy('created_at')->get();
+        }
         return response()->json([
             'message' => "",
             'result' => $groups,
@@ -23,10 +32,12 @@ class GroupController extends Controller
             try {
             $data = $req->validate([
                 'name'=>"required",
+                "level"=>self::$user->level == "admin"?"required":"nullable",
                 "students"=>"nullable"
             ]);
             $group=groups::create([
-                "name"=>$data['name']
+                "name"=>$data['name'],
+                'level'=>self::$user->level != "admin"?self::$user->level:$data['level'],
             ]);
             
             foreach ($data["students"] as $record) {

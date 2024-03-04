@@ -42,7 +42,7 @@ return [
             'provider' => 'users',
         ],
         'admin' => [
-            'driver' => 'sanctum', 
+            'driver' => 'jwt', 
             'provider' => 'admins', 
         ],
         // 'user' => [

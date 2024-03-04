@@ -10,7 +10,11 @@ use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
-    
+    private static $user;
+    public function __construct()
+    {
+        self::$user = auth()->guard('admin')->user();
+    }
     
     function store(Request $request){
         $formInputs = $request->validate([
@@ -37,7 +41,7 @@ class StudentController extends Controller
         return response()->json([
             'returnCode'=>200,
             'message' => "",
-            'result' => Students::with("groups")->get(),
+            'result' => self::$user->level=="admin"? Students::with("groups")->get(): Students::with("groups")->where("level",self::$user->level)->get(),
         ]);
     }
     public function changeUserGroup(Request $request,Students $student){

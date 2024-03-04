@@ -36,18 +36,42 @@ class AdminController extends Controller
             'password'=>'required',
         ]);
 
-        $admin = admins::where('username', $formInputs['username'])->first();
+        $token = Auth::guard("admin")->attempt($formInputs);
 
-        if (!$admin || !Hash::check($formInputs['password'], $admin->password)) {
-            throw ValidationException::withMessages([
-                'username' => ['The provided credentials are incorrect.'],
-            ]);
+        if (!$token) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 401);
         }
-    
-        $token = $admin->createToken('MyAppToken')->plainTextToken;
+
+        $user = Auth::guard("admin")->user();
         return response()->json([
-            'user' => $admin,
-            'access_token' => $token,
+            'user' => $user,
+            'authorization' => [
+                'token' => $token,
+                'type' => 'bearer',
+            ]
+        ]);
+
+        // $admin = admins::where('username', $formInputs['username'])->first();
+
+        // if (!$admin || !Hash::check($formInputs['password'], $admin->password)) {
+        //     throw ValidationException::withMessages([
+        //         'username' => ['The provided credentials are incorrect.'],
+        //     ]);
+        // }
+    
+        // $token = $admin->createToken('MyAppToken')->plainTextToken;
+        // return response()->json([
+        //     'user' => $admin,
+        //     'access_token' => $token,
+        // ]);
+    }
+    public function logout(){
+        auth()->guard('admin')->user()->tokens()->delete();
+        return response()->json([
+            'message' => "logout success",
+            'result' => "",
         ]);
     }
     function delete($id){

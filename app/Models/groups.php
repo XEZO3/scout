@@ -11,6 +11,7 @@ class groups extends Model
     use HasFactory;
     protected $fillable = [
         'name',
+        'level'
     ];
 
     public function Students(): HasMany{

@@ -10,21 +10,16 @@ use Illuminate\Support\Facades\DB;
 
 class ActivitiesController extends Controller
 {
-    private static $user;
-    public function __construct()
-    {
-        self::$user = auth()->guard('admin')->user();
-    }
+   
 
     public function index(){
        
-        
-        if(self::$user->level ==null ||empty(self::$user->level)){
-            $activities['activity'] = activities::with("students")->orderBy('created_at')->get();
+        if(auth()->guard('admin')->user()->level!="admin"){
+            $activities['activity'] = activities::with("students")->where("level",auth()->guard('admin')->user()->level)->orderBy('created_at')->get();
         }else{
-            $activities['activity'] = activities::with("students")->where("level",self::$user->level)->orderBy('created_at')->get();
+            $activities['activity'] = activities::with("students")->orderBy('created_at')->get();
         }
-        $activities['total_user'] = Students::count();
+            $activities['total_user'] = Students::where("level",auth()->guard('admin')->user()->level)->count();
         return response()->json([
             'message' => "",
             'result' => $activities,
@@ -35,10 +30,12 @@ class ActivitiesController extends Controller
         try {
         $data = $req->validate([
             'title'=>"required",
+            "level"=>auth()->guard('admin')->user()->level == "admin"?"required":"nullable",
             "absent_user"=>"nullable"
         ]);
         $activities = activities::create([
-            "title"=>$data['title']
+            "title"=>$data['title'],
+            'level'=>auth()->guard('admin')->user()->level != "admin"?auth()->guard('admin')->user()->level:$data['level'],
         ]);
         $activities->Students()->attach($data['absent_user']);
         

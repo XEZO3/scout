@@ -27,12 +27,13 @@ Route::post('/user/login',[UserController::class,"login"]);
 
 Route::post('/admin/store',[AdminController::class,"store"]);
 Route::post('/admin/login',[AdminController::class,"login"]);
+Route::post('/admin/logout',[AdminController::class,"logout"])->middleware('auth:admin');
 
 
 
-Route::resource('activities', ActivitiesController::class)->middleware('auth:admin');
-Route::resource('groups', GroupController::class)->middleware('auth:sanctum');
-Route::resource('students', AdminUserController::class)->middleware('auth:sanctum');
+Route::resource('activities', ActivitiesController::class)->middleware('jwt.auth');
+Route::resource('groups', GroupController::class)->middleware('jwt.auth');
+Route::resource('students', AdminUserController::class)->middleware('jwt.auth');
 Route::put('/students/changeGroup/{student}',[AdminUserController::class,"changeUserGroup"]);
 
 // Route::post("/activity/save/{activity_id}",[UserActivitiesController::class,"store"]);
