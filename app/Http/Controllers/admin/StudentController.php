@@ -7,6 +7,7 @@ use App\Models\groups;
 use App\Models\Students;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
 {
@@ -23,9 +24,10 @@ class StudentController extends Controller
             'phone_number2'=>'nullable|min:10',
             'location'=>'required',
             'medical'=>'nullable',
-            'points'=>'nullable|numeric',            
+            'points'=>'nullable|numeric',
+            "level"=>auth()->guard('admin')->user()->level == "admin"?"required":"nullable",            
         ]);
-       
+       $formInputs['level'] = (auth()->guard('admin')->user()->level != "admin")?auth()->guard('admin')->user()->level:$formInputs['level']; 
         $user = Students::create($formInputs);
         // $token = $user->createToken('MyAppToken')->plainTextToken;
 
@@ -44,6 +46,36 @@ class StudentController extends Controller
             'result' => self::$user->level=="admin"? Students::with("groups")->get(): Students::with("groups")->where("level",self::$user->level)->get(),
         ]);
     }
+    function edit($id){
+        return response()->json([
+            'message' => '',
+            'result' => Students::with("groups")->where("id",$id)->first(),
+        ]);
+    }
+    function update(Request $req,$id){
+        $student = Students::find($id);
+        $data = $req->validate([
+            'name'=>'required|min:3',
+            'phone_number1'=>'required|min:10',
+            'phone_number2'=>'nullable|min:10',
+            'location'=>'required',
+            'medical'=>'nullable',
+            'points'=>'nullable|numeric',
+        ]);
+        DB::beginTransaction();
+        try {
+        $student->update($data);
+        DB::commit();
+        return response()->json([
+            'message' => "done",
+            'result' => "",
+        ],200);
+    
+        }catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error creating activity and associating users: ' . $e->getMessage()], 500);
+        }       
+    }
     public function changeUserGroup(Request $request,Students $student){
         $formInputs = $request->validate([
             'newGroupId'=>'nullable',
@@ -56,10 +88,14 @@ class StudentController extends Controller
             'message' => "done",
             'result' => "",
         ]);
-    }   
-
-    public function addRange(Request $request){
-
     }
+    public function destroy($id){
+        Students::destroy($id);
+        return response()->json([
+            'returnCode'=>200,
+            'message' => "done",
+            'result' => "",
+        ],200);
+    }   
 
 }

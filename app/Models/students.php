@@ -28,7 +28,7 @@ class Students extends Model
         'medical',
         'points',
         'absens',
-        'level'
+        'level',
     ];
     
     /**

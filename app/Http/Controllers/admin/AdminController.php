@@ -17,7 +17,7 @@ class AdminController extends Controller
             'name'=>'required|min:3',
             'username'=>'required|unique:admins',
             'password'=>'required|min:4',
-            'level'=>'nullable'
+            'level'=>'required'
         ]);
         $formInputs['password']=bcrypt($formInputs['password']);
         
@@ -40,8 +40,9 @@ class AdminController extends Controller
 
         if (!$token) {
             return response()->json([
-                'message' => 'Unauthorized',
-            ], 401);
+                'returnCode'=>401,
+                'message' => 'اسم المستخدم او كلمة المرور خطأ',
+            ], 200);
         }
 
         $user = Auth::guard("admin")->user();
