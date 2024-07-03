@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\ActivitiesController;
-use App\Http\Controllers\admin\AdminController;
+use App\Http\Controllers\admin\AdminAuthController;
 use App\Http\Controllers\admin\GroupController;
 use App\Http\Controllers\admin\UserActivitiesController;
 use App\Http\Controllers\admin\StudentController as AdminUserController;
@@ -25,9 +25,9 @@ Route::post('/user/login',[UserController::class,"login"]);
 // Route::get('/students/getall',[AdminUserController::class,"index"]);
 
 
-Route::post('/admin/store',[AdminController::class,"store"]);
-Route::post('/admin/login',[AdminController::class,"login"]);
-Route::post('/admin/logout',[AdminController::class,"logout"])->middleware('auth:admin');
+Route::post('/admin/store',[AdminAuthController::class,"store"]);
+Route::post('/admin/login',[AdminAuthController::class,"login"]);
+Route::post('/admin/logout',[AdminAuthController::class,"logout"])->middleware('auth:admin');
 
 
 

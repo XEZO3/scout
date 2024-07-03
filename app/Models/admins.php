@@ -40,7 +40,7 @@ class admins extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [
-            'user_level' => $this->level,
+            
         ];
     }
 }
