@@ -25,9 +25,12 @@ Route::post('/user/login',[UserController::class,"login"]);
 // Route::get('/students/getall',[AdminUserController::class,"index"]);
 
 
-Route::post('/admin/store',[AdminAuthController::class,"store"]);
-Route::post('/admin/login',[AdminAuthController::class,"login"]);
-Route::post('/admin/logout',[AdminAuthController::class,"logout"])->middleware('auth:admin');
+Route::prefix('admin')->group(function () {
+    Route::post('/store', [AdminAuthController::class, 'store']);
+    Route::post('/login', [AdminAuthController::class, 'login']);
+    Route::post('/refresh', [AdminAuthController::class, 'refresh']);
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->middleware('auth:admin');
+});
 
 
 

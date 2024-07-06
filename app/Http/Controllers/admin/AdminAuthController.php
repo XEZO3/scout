@@ -1,15 +1,16 @@
 <?php
 
 namespace App\Http\Controllers\admin;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 use App\Http\Controllers\Controller;
 use App\Models\admins;
 use Illuminate\Http\Request;
-use App\Services\LeadersService\Interfaces\LeaderAuthServiceInterface;
+use App\Services\GeneralInterfaces\AuthServiceInterface;
 class AdminAuthController extends Controller
 {
     private $leaderAuthService;
-    public function __construct(LeaderAuthServiceInterface $leaderService) {
+    public function __construct(AuthServiceInterface $leaderService) {
         $this->leaderAuthService = $leaderService;
     }
     function store(Request $request){
@@ -20,37 +21,24 @@ class AdminAuthController extends Controller
             'level'=>'required'
         ]);
         $formInputs['password']=bcrypt($formInputs['password']);
+        $response = $this->leaderAuthService->create($formInputs);
+        $refreshToken  = $response['result']['refresh_token'];
+        unset($response['result']['refresh_token']);
+        return response()->json($response)->cookie('refresh_token', $refreshToken, 60 * 24 * 7, null, null, true, true, false, 'Strict');;
         
-        $user = admins::create($formInputs);
-        $name = $user['name'];
-        $token = $user->createToken('MyAppToken')->plainTextToken;
-
-        return response()->json([
-            'message' => 'Welcome ' . $name,
-            'access_token' => $token,
-        ]);
     }
     function login(Request $request){
         $formInputs = $request->validate([
             'username'=>'required',
             'password'=>'required',
         ]);
-
         $response=$this->leaderAuthService->login($formInputs);
-        if($response['success']){
-            return response()->json(
-                [
-                'success' => true,
-                'user'=>$response['user'],
-                'access_token'=>$response['access']
-                ]
-            )->cookie('refresh_token', $response['refresh'], 60 * 24 * 7, null, null, true, true, false, 'Strict');
-            }else{
-                return response()->json([
-                    'success'=>false,
-                    'message'=>$response['message']
-                ],401);
-            }
+       if($response['success']){
+        $refreshToken  = $response['result']['refresh_token'];
+        unset($response['result']['refresh_token']);
+        return response()->json($response)->cookie('refresh_token',  $refreshToken, 60 * 24 * 7, null, null, true, true, false, 'Strict');
+       }
+       return response()->json($response);
     }
     public function refresh(Request $request)
     {
@@ -59,8 +47,9 @@ class AdminAuthController extends Controller
         return response()->json($response);
     }
 
-    public function logout(){
-        $response = $this->leaderAuthService->logout();
+    public function logout(Request $request){
+        $refreshToken = $request->cookie('refresh_token');
+        $response = $this->leaderAuthService->logout( $refreshToken);
         return response()->json($response)->cookie('refresh_token', '', -1, '/', null, true, true, false, 'Strict');
     }
    

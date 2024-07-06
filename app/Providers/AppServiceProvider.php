@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\LeadersService\Interfaces\LeaderAuthServiceInterface;
+use App\Services\GeneralInterfaces\AuthServiceInterface;
 use App\Services\LeadersService\LeaderAuthService;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(LeaderAuthServiceInterface::class,LeaderAuthService::class);
+        $this->app->bind(AuthServiceInterface::class,LeaderAuthService::class);
     }
 
     /**
