@@ -51,7 +51,7 @@ class LeaderAuthService implements AuthServiceInterface
             if (count($tokenParts) !== 2) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Invalid refresh token format'
+                    'message' => 'Invalid refresh token format ezoooooooooooooo'
                 ], 401);
             }
             if (!$tokenRecord) {
