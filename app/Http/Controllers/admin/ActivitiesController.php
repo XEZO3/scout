@@ -7,54 +7,25 @@ use App\Models\activities;
 use App\Models\Students;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use App\Services\LeadersService\ActivityService;
 class ActivitiesController extends Controller
 {
-   
-
+    private $activityService;
+    public function __construct(ActivityService $activityService) {
+        $this->activityService = $activityService;
+    }
     public function index(){
        
-        if(auth()->guard('admin')->user()->level!="admin"){
-            $activities['activity'] = activities::with("students")->where("level",auth()->guard('admin')->user()->level)->orderBy('created_at')->get();
-        }else{
-            $activities['activity'] = activities::with("students")->orderBy('created_at')->get();
-        }
-            $activities['total_user'] = Students::where("level",auth()->guard('admin')->user()->level)->count();
-        return response()->json([
-            'message' => "",
-            'result' => $activities,
-        ],200);
+       $response = $this->activityService.getAll();
+        return response()->json($response);
     }
     public function store(Request $req){
-        DB::beginTransaction();
-        try {
         $data = $req->validate([
             'title'=>"required",
             "level"=>auth()->guard('admin')->user()->level == "admin"?"required":"nullable",
             "absent_user"=>"nullable"
         ]);
-        $activities = activities::create([
-            "title"=>$data['title'],
-            'level'=>auth()->guard('admin')->user()->level != "admin"?auth()->guard('admin')->user()->level:$data['level'],
-        ]);
-        $activities->Students()->attach($data['absent_user']);
-        
-        foreach ($data["absent_user"] as $record) {
-            $user = Students::find($record);
-            $user->absens +=1;
-            $user->save(); 
-        }
-
-        DB::commit();
-        return response()->json([
-            'message' => "done",
-            'result' => "",
-        ],200);
-    
-        }catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['message' => 'Error creating activity and associating users: ' . $e->getMessage()], 500);
-        }       
+        $response = $this->activityService.create($data);
     }
     public function edit($id){
         return response()->json([

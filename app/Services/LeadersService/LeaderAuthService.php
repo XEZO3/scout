@@ -8,8 +8,9 @@ use App\Models\admins;
 use App\Models\PersonalAccessToken;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use App\Services\BaseService;
 
-class LeaderAuthService implements AuthServiceInterface
+class LeaderAuthService extends BaseService implements AuthServiceInterface
 {
     public function login(array $credentials)
     {
@@ -106,13 +107,7 @@ class LeaderAuthService implements AuthServiceInterface
             return $this->response(false,"some errors happen",array());
         }
     }
-    protected function response(bool $success,string $message=null,array $result): array{
-        return [
-            "success"=>$success,
-            "message"=>$message,
-            "result"=>$result
-        ];
-    }
+    
 
 }
 ?>
