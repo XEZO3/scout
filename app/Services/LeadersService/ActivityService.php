@@ -16,11 +16,12 @@ class ActivityService extends BaseService
                 $query->select('students_id', 'activities_id');
             }])
             ->orderBy('created_at')
-            ->get();        }else{
+            ->get();        
+        }else{
             $activities['activity'] = activities::with("students")->orderBy('created_at')->get();
         }
             $activities['total_user'] = Students::where("level",$level)->count();
-            $activities['activity']['absent_user'] =activities::with("students")->where("level",$level)->orderBy('created_at')->count();
+            // $activities['activity']['absent_user'] =activities::with("students")->where("level",$level)->orderBy('created_at')->count();
 
         return $this->response(true,"",$activities);
     }
