@@ -38,7 +38,7 @@ class ActivityService extends BaseService
         return $this->response(true,"",array());
         }catch (\Exception $e) {
             DB::rollBack();
-            return $this->response(false,"Error creating activity and associating users",array());
+            return $this->response(false,"Error creating activity and associating users".$e->getMessage(),array());
         }       
     }
 }
