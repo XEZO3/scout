@@ -26,6 +26,7 @@ class ActivitiesController extends Controller
             "absent_user"=>"nullable"
         ]);
         $response = $this->activityService->create($data);
+        return response()->json($response);
     }
     public function edit($id){
         return response()->json([

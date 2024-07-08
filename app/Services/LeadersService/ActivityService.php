@@ -26,6 +26,7 @@ class ActivityService extends BaseService
             "title"=>$data['title'],
             'level'=>$level!="admin"?$level:$data['level'],
         ]);
+        
         $activities->Students()->attach($data['absent_user']);
         
         foreach ($data["absent_user"] as $record) {
@@ -33,7 +34,6 @@ class ActivityService extends BaseService
             $user->absens +=1;
             $user->save(); 
         }
-
         DB::commit();
         return $this->response(true,"",array());
         }catch (\Exception $e) {
