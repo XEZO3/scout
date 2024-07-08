@@ -12,9 +12,7 @@ class ActivityService extends BaseService
         $level = auth()->guard('admin')->user()->level;
         if($level!="admin"){
             $activities['activity'] = activities::where("level", $level)
-            ->with(['students' => function($query) {
-                $query->select('students.id');
-            }])
+            ->with(['students:id'])
             ->orderBy('created_at')
             ->get();        
         }else{
