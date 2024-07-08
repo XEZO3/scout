@@ -13,7 +13,7 @@ class ActivityService extends BaseService
         if($level!="admin"){
             $activities = activities::where("level", $level)
             ->with(['students' => function($query) {
-                $query->select('id');
+                $query->select('students.id');
             }])
             ->orderBy('created_at')
             ->get();        
