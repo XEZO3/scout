@@ -16,7 +16,7 @@ class ActivitiesController extends Controller
     }
     public function index(){
        
-       $response = $this->activityService.getAll();
+       $response = $this->activityService->getAll();
         return response()->json($response);
     }
     public function store(Request $req){
@@ -25,7 +25,7 @@ class ActivitiesController extends Controller
             "level"=>auth()->guard('admin')->user()->level == "admin"?"required":"nullable",
             "absent_user"=>"nullable"
         ]);
-        $response = $this->activityService.create($data);
+        $response = $this->activityService->create($data);
     }
     public function edit($id){
         return response()->json([
