@@ -11,7 +11,7 @@ class ActivityService extends BaseService
     public function getAll(){
         $level = auth()->guard('admin')->user()->level;
         if($level!="admin"){
-            $activities = Activity::where("level", $level)
+            $activities = activities::where("level", $level)
             ->with(['students' => function($query) {
                 $query->select('students_id', 'activities_id');
             }])
