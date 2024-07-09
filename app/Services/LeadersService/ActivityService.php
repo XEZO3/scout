@@ -29,6 +29,7 @@ class ActivityService extends BaseService
         $activities = activities::create([
             "title"=>$data['title'],
             'level'=>$level!="admin"?$level:$data['level'],
+            'place'=>$data['place']
         ]);
         // $this->setAbsent($activities,$data['absent_user']);
 
