@@ -6,18 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Models\groups;
 use App\Models\Students;
 use App\Models\User;
+use App\Services\LeadersService\StudentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
 {
     private static $user;
-    public function __construct()
+    private $studentService;
+    public function __construct(StudentService $studentService)
     {
+        $this->studentService = $studentService;
         self::$user = auth()->guard('admin')->user();
     }
     
     function store(Request $request){
+        $level = auth()->guard('admin')->user()->level;
         $formInputs = $request->validate([
             'name'=>'required|min:3',
             'phone_number1'=>'required|min:10',
@@ -25,12 +29,10 @@ class StudentController extends Controller
             'location'=>'required',
             'medical'=>'nullable',
             'points'=>'nullable|numeric',
-            "level"=>auth()->guard('admin')->user()->level == "admin"?"required":"nullable",            
+            "level"=> $level == "admin"?"required":"nullable",            
         ]);
-       $formInputs['level'] = (auth()->guard('admin')->user()->level != "admin")?auth()->guard('admin')->user()->level:$formInputs['level']; 
+       $formInputs['level'] = ( $level != "admin")? $level:$formInputs['level']; 
         $user = Students::create($formInputs);
-        // $token = $user->createToken('MyAppToken')->plainTextToken;
-
         return response()->json([
             'message' => 'Welcome ',
             'result' => "done",
@@ -40,11 +42,8 @@ class StudentController extends Controller
    
    
     function index(){
-        return response()->json([
-            'returnCode'=>200,
-            'message' => "",
-            'result' => self::$user->level=="admin"? Students::with("groups")->get(): Students::with("groups")->where("level",self::$user->level)->get(),
-        ]);
+        $response = $this->studentService->getAll();
+        return response()->json($response);
     }
     function edit($id){
         return response()->json([

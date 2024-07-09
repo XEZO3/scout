@@ -23,6 +23,7 @@ class ActivitiesController extends Controller
         $data = $req->validate([
             'title'=>"required",
             "level"=>auth()->guard('admin')->user()->level == "admin"?"required":"nullable",
+            'place'=>"required",
             "absent_user"=>"nullable"
         ]);
         $response = $this->activityService->create($data);

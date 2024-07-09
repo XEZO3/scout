@@ -16,7 +16,7 @@ class ActivityService extends BaseService
             ->orderBy('created_at')
             ->get();        
         }else{
-            $activities['activity'] = activities::with("students")->orderBy('created_at')->get();
+            $activities['activity'] = activities::with("students:id")->orderBy('created_at')->get();
         }
             $activities['total_user'] = Students::where("level",$level)->count();
 
@@ -30,13 +30,7 @@ class ActivityService extends BaseService
             "title"=>$data['title'],
             'level'=>$level!="admin"?$level:$data['level'],
         ]);
-        $activities->Students()->attach($data['absent_user']);
-        
-        foreach ($data["absent_user"] as $record) {
-            $user = Students::find($record);
-            $user->absens +=1;
-            $user->save(); 
-        }
+        // $this->setAbsent($activities,$data['absent_user']);
 
         DB::commit();
         return $this->response(true,"",array());
@@ -44,5 +38,13 @@ class ActivityService extends BaseService
             DB::rollBack();
             return $this->response(false,"Error creating activity and associating users",array());
         }       
+    }
+    public function setAbsent($activities,$ids){
+        $activities->Students()->attach($ids);   
+        foreach ($ids as $record) {
+            $user = Students::find($record);
+            $user->absens +=1;
+            $user->save(); 
+        }
     }
 }
