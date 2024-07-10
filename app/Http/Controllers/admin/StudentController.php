@@ -37,10 +37,7 @@ class StudentController extends Controller
             'message' => 'Welcome ',
             'result' => "done",
         ]);
-        
     }
-   
-   
     function index(){
         $response = $this->studentService->getAll();
         return response()->json($response);

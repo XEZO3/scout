@@ -34,10 +34,29 @@ Route::prefix('admin')->group(function () {
 
 
 
-Route::resource('activities', ActivitiesController::class)->middleware('jwt.auth');
-Route::resource('groups', GroupController::class)->middleware('jwt.auth');
-Route::resource('students', AdminUserController::class)->middleware('jwt.auth');
-Route::put('/students/changeGroup/{student}',[AdminUserController::class,"changeUserGroup"]);
+// Route::resource('activities', ActivitiesController::class)->middleware('jwt.auth');
+// Route::resource('activities', ActivitiesController::class)->middleware('jwt.auth');
+// Route::post('/takeabsent/{activity}', [ActivitiesController::class,'takeAbsent'])->middleware('auth:admin');
+// Route::resource('groups', GroupController::class)->middleware('jwt.auth');
+// Route::resource('students', AdminUserController::class)->middleware('jwt.auth');
+// Route::put('/students/changeGroup/{student}',[AdminUserController::class,"changeUserGroup"]);
+
+
+Route::middleware('jwt.auth')->group(function () {
+    Route::prefix('activities')->group(function () {
+        Route::resource('/', ActivitiesController::class);
+        Route::post('/takeabsent/{activity}', [ActivitiesController::class, 'takeAbsent']);
+    });
+
+    Route::prefix('groups')->group(function () {
+        Route::resource('/', GroupController::class);
+    });
+
+    Route::prefix('students')->group(function () {
+        Route::resource('/', AdminUserController::class);
+        Route::put('/changeGroup/{student}', [AdminUserController::class, 'changeUserGroup']);
+    });
+});
 
 // Route::post("/activity/save/{activity_id}",[UserActivitiesController::class,"store"]);
 

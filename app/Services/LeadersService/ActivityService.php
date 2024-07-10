@@ -40,12 +40,16 @@ class ActivityService extends BaseService
             return $this->response(false,"Error creating activity and associating users",array());
         }       
     }
-    public function setAbsent($activities,$ids){
-        $activities->Students()->attach($ids);   
+    private function setAbsent($activity,$ids){
+        $activity->Students()->attach($ids);   
         foreach ($ids as $record) {
             $user = Students::find($record);
             $user->absens +=1;
             $user->save(); 
         }
+    }
+    public function takeAbsent($activity,$absentIds){
+        $this->setAbsent($activity,$absentIds);
+        return $this->response(true,"",array());
     }
 }

@@ -24,9 +24,16 @@ class ActivitiesController extends Controller
             'title'=>"required",
             "level"=>auth()->guard('admin')->user()->level == "admin"?"required":"nullable",
             'place'=>"required",
-            "absent_user"=>"nullable"
         ]);
         $response = $this->activityService->create($data);
+        return response()->json($response);
+    }
+    public function takeAbsent(Request $req, activities $activity){
+        $validation = $req->validate([
+             "absent_user"=>"nullable"
+        ]);
+        $absent_id = $validation["absent_user"] ??null;
+        $response = $this->activityService->takeAbsent($activity,$absent_id);
         return response()->json($response);
     }
     public function edit($id){

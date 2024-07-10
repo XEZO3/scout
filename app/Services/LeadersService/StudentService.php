@@ -10,9 +10,11 @@ class StudentService extends BaseService
     public function getAll(){
         $level = auth()->guard('admin')->user()->level;
         if($level!="admin"){
-              return $this->response(true,"",Students::where('level',$level)->get());    
+            $students = Students::where("level",$level)->get();
+              return $this->response(true,"",$students);    
         }else{
-             return  $this->response(true,"",Students::orderBy('created_at')->get());    
+            $students = Students::orderBy('created_at')->get();
+             return  $this->response(true,"", $students);    
         }
     }
     public function create($data){
