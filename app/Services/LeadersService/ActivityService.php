@@ -48,10 +48,12 @@ class ActivityService extends BaseService
         //     $user->save(); 
         // }
     }
-    public function takeAbsent($activity,$absentIds){
+    public function takeAbsent($activity){
         $students = Students::all();
-        $absent_students = activities::with("students:id")->find($activity);    
-        // $this->setAbsent($activity,$absentIds);
-        // return $this->response(true,"",array());
+        $activityInfo = activities::with("students:id")->find($activity);
+        $result = [];    
+        $result['students'] = $students;
+        $result['activity'] = $activityInfo;
+        return $this->response(true,"", $result);
     }
 }

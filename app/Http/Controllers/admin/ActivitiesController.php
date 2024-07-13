@@ -28,8 +28,9 @@ class ActivitiesController extends Controller
         $response = $this->activityService->create($data);
         return response()->json($response);
     }
-    public function takeAbsent(Request $req, activities $activity){
-       dd($activity);
+    public function takeAbsent(Request $req, $activity){
+        $response = $this->activityService->takeAbsent($activity);
+        return response()->json($response);
     }
     public function setAbsent(Request $req, activities $activity){
         $validation = $req->validate([
