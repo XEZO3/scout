@@ -45,7 +45,7 @@ Route::prefix('admin')->group(function () {
 Route::middleware('jwt.auth')->group(function () {
     Route::prefix('activities')->group(function () {
         Route::resource('/', ActivitiesController::class);
-        Route::post('/takeabsent/{activity}', [ActivitiesController::class, 'takeAbsent']);
+        Route::get('/takeabsent/{activity}', [ActivitiesController::class, 'takeAbsent']);
     });
 
     Route::prefix('groups')->group(function () {
