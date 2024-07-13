@@ -29,12 +29,15 @@ class ActivitiesController extends Controller
         return response()->json($response);
     }
     public function takeAbsent(Request $req, activities $activity){
+       dd($activity);
+    }
+    public function setAbsent(Request $req, activities $activity){
         $validation = $req->validate([
-             "absent_user"=>"nullable"
-        ]);
-        $absent_id = $validation["absent_user"] ??null;
-        $response = $this->activityService->takeAbsent($activity,$absent_id);
-        return response()->json($response);
+            "absent_user"=>"nullable"
+       ]);
+       $absent_id = $validation["absent_user"] ??null;
+       $response = $this->activityService->takeAbsent($activity,$absent_id);
+       return response()->json($response);
     }
     public function edit($id){
         return response()->json([
