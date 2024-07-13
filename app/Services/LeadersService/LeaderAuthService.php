@@ -45,8 +45,8 @@ class LeaderAuthService extends BaseService implements AuthServiceInterface
     public function refresh($refreshToken)
     {
             $tokenParts = explode('|', $refreshToken);
-            $tokenId = $tokenParts[0];
-            $plainTextToken = $tokenParts[1];
+            $tokenId = $tokenParts[0]??null;
+            $plainTextToken = $tokenParts[1]??null;
             $tokenRecord = PersonalAccessToken::find($tokenId);
             $tokenParts = explode('|', $refreshToken);
             if (count($tokenParts) !== 2) {
